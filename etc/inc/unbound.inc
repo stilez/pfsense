@@ -99,7 +99,8 @@ function unbound_optimization() {
 
 }
 
-function unbound_generate_config() {
+/* call with $testonly=true to generate, validate and return (1 = error) */ 
+function unbound_generate_config($testonly = false) {
     global $config, $g;
 
     // Setup optimization
@@ -243,9 +244,15 @@ include: {$g['unbound_chroot_path']}/remotecontrol.conf
 
 EOD;
 
-    file_put_contents("{$g['unbound_chroot_path']}/unbound.conf", $unboundconf);
-
-    return 0;
+    // config generated, either test it or save it
+    if ($testonly) {
+        $fname = "{$g['unbound_chroot_path']}/unbound.test.conf";
+        file_put_contents($fname, $unboundconf);
+        return mwexec("/usr/local/sbin/unbound-checkconf {$fname}");
+    } else {
+        file_put_contents("{$g['unbound_chroot_path']}/unbound.conf", $unboundconf);
+        return 0;
+    }
 }
 
 function unbound_remote_control_setup() {
