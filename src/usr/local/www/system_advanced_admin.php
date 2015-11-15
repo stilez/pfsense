@@ -146,7 +146,7 @@ if ($_POST) {
 	}
 
 	if ($_POST['csrf_timeout']) {
-		if (!is_numericint($_POST['csrf_timeout'])) {
+		if (!is_numeric($_POST['csrf_timeout'])) {
 			$input_errors[] = gettext("You must specify a valid CSRF timeout");
 		}
 	}
@@ -478,17 +478,18 @@ $section->addInput(new Form_Checkbox(
 	'information on HTTP_REFERER is available from <a target="_blank" '.
 	'href="http://en.wikipedia.org/wiki/HTTP_referrer">Wikipedia</a>.');
 
-// FIXME: I followed same method as $sshport which is left undefined and then hard-coded wherever used 9"$sshport=22")
+// FIXME: I followed same method as $sshport which is left undefined and then hard-coded wherever used ("$sshport=22")
 //        but this isn't really ideal, as it leaves hard coded values throughout. Should be one central definition.
 $section->addInput(new Form_Input(
 	'csrf timeout',
 	'CSRF timeout',
 	'number',
 	$pconfig['system']['webgui']['csrf_timeout'],
-	['min' => 0, 'placeholder' => 7200]
+	['placeholder' => 7200]
 ))->setHelp('Enter the CSRF timeout for the webConfigurator, in seconds. As a security '.
 	'measure, browser pages idle for this long will no longer be responded to - pages must '.
-	'be reloaded to continue, and text on the screen may be lost. Enter 0 to disable CSRF timeout.');
+	'be reloaded to continue, and text on the screen may be lost. Enter a negative number to disable CSRF timeout '.
+	'or 0 for the default (7200 seconds).');
 
 $section->addInput(new Form_Checkbox(
 	'pagenamefirst',
