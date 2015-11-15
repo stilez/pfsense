@@ -30,7 +30,7 @@ $GLOBALS['csrf']['defer'] = false;
  * invalid; the default is two hours, which should be more than enough for
  * most websites.
  */
-if (isset($config['system']['webgui']['csrf_timeout'] && is_numeric($config['system']['webgui']['csrf_timeout']) && $config['system']['webgui']['csrf_timeout'] != 0) {
+if (isset($config['system']['webgui']['csrf_timeout']) && is_numeric($config['system']['webgui']['csrf_timeout']) && $config['system']['webgui']['csrf_timeout'] != 0) {
 	if ($config['system']['webgui']['csrf_timeout'] > 0)
 		$GLOBALS['csrf']['expires'] = $config['system']['webgui']['csrf_timeout'];
 	else
