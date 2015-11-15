@@ -30,7 +30,13 @@ $GLOBALS['csrf']['defer'] = false;
  * invalid; the default is two hours, which should be more than enough for
  * most websites.
  */
-$GLOBALS['csrf']['expires'] = 7200;
+if (isset($config['system']['webgui']['csrf_timeout'] && is_numeric($config['system']['webgui']['csrf_timeout']) && $config['system']['webgui']['csrf_timeout'] != 0) {
+	if ($config['system']['webgui']['csrf_timeout'] > 0)
+		$GLOBALS['csrf']['expires'] = $config['system']['webgui']['csrf_timeout'];
+	else
+		$GLOBALS['csrf']['expires'] = 10*365*86400;  //10 yrs is as close as needed to "no timeout" in context of a browser page
+} else
+	$GLOBALS['csrf']['expires'] = 7200;  //default used if unset
 
 /**
  * Callback function to execute when there's the CSRF check fails and
