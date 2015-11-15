@@ -484,7 +484,7 @@ $section->addInput(new Form_Input(
 	'csrf timeout',
 	'CSRF timeout',
 	'number',
-	$config['system']['webgui']['csrf_timeout'],
+	$pconfig['system']['webgui']['csrf_timeout'],
 	['min' => 0, 'placeholder' => 7200]
 ))->setHelp('Enter the CSRF timeout for the webConfigurator, in seconds. As a security '.
 	'measure, browser pages idle for this long will no longer be responded to - pages must '.
