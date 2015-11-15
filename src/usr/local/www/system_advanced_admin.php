@@ -468,6 +468,16 @@ $section->addInput(new Form_Checkbox(
 	'information on HTTP_REFERER is available from <a target="_blank" '.
 	'href="http://en.wikipedia.org/wiki/HTTP_referrer">Wikipedia</a>.');
 
+$section->addInput(new Form_Input(
+	'csrf timeout',
+	'CSRF timeout',
+	'number',
+	$config['system']['webgui']['csrf_timeout'],
+	['min' => 0]
+))->setHelp('Enter the CSRF timeout for the webConfigurator, in seconds. As a security '.
+	'measure, browser pages idle for this long will no longer be responded to, and must '.
+	'be reloaded to continue, and text displayed may be lost. Enter 0 to disable CSRF timeout.');
+
 $section->addInput(new Form_Checkbox(
 	'pagenamefirst',
 	'Browser tab text',
