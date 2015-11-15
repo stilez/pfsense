@@ -93,6 +93,7 @@ $pconfig['enablesshd'] = $config['system']['enablesshd'];
 $pconfig['sshport'] = $config['system']['ssh']['port'];
 $pconfig['sshdkeyonly'] = isset($config['system']['ssh']['sshdkeyonly']);
 $pconfig['quietlogin'] = isset($config['system']['webgui']['quietlogin']);
+$pconfig['csrf_timeout'] = $config['system']['webgui']['csrf_timeout'];
 
 $a_cert =& $config['cert'];
 $certs_available = false;
@@ -144,6 +145,12 @@ if ($_POST) {
 		unset($config['system']['ssh']['sshdkeyonly']);
 	}
 
+	if ($_POST['csrf_timeout']) {
+		if (!is_numericint($_POST['csrf_timeout'])) {
+			$input_errors[] = gettext("You must specify a valid CSRF timeout");
+		}
+	}
+
 	ob_flush();
 	flush();
 
@@ -158,6 +165,9 @@ if ($_POST) {
 			$restart_webgui = true;
 		}
 		if (update_if_changed("webgui max processes", $config['system']['webgui']['max_procs'], $_POST['max_procs'])) {
+			$restart_webgui = true;
+		}
+		if (update_if_changed("csrf timeout", $config['system']['webgui']['csrf_timeout'], $_POST['csrf_timeout'])) {
 			$restart_webgui = true;
 		}
 
@@ -468,15 +478,17 @@ $section->addInput(new Form_Checkbox(
 	'information on HTTP_REFERER is available from <a target="_blank" '.
 	'href="http://en.wikipedia.org/wiki/HTTP_referrer">Wikipedia</a>.');
 
+// FIXME: I followed same method as $sshport which is left undefined and then hard-coded wherever used 9"$sshport=22")
+//        but this isn't really ideal, as it leaves hard coded values throughout. Should be one central definition.
 $section->addInput(new Form_Input(
 	'csrf timeout',
 	'CSRF timeout',
 	'number',
 	$config['system']['webgui']['csrf_timeout'],
-	['min' => 0]
+	['min' => 0, 'placeholder' => 7200]
 ))->setHelp('Enter the CSRF timeout for the webConfigurator, in seconds. As a security '.
-	'measure, browser pages idle for this long will no longer be responded to, and must '.
-	'be reloaded to continue, and text displayed may be lost. Enter 0 to disable CSRF timeout.');
+	'measure, browser pages idle for this long will no longer be responded to - pages must '.
+	'be reloaded to continue, and text on the screen may be lost. Enter 0 to disable CSRF timeout.');
 
 $section->addInput(new Form_Checkbox(
 	'pagenamefirst',
