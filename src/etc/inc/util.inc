@@ -349,6 +349,31 @@ function is_numericint($arg) {
 	return (((is_int($arg) && $arg >= 0) || (is_string($arg) && strlen($arg) > 0 && ctype_digit($arg))) ? true : false);
 }
 
+/* converts an IPv4/IPv6 IP to an 8/32 character hex string
+   allowing easy and reliable compare of (>, =, <, include, exclude)
+   between any combination of individual IP, subnet, and range
+   Returns array with 'type' => 4, 6 or ''  (not an IP), and 'hex' => value */
+function ip_to_comparablehex($ip) {
+	$type = is_ipaddr($ip);
+	
+	if ($type == 4) {
+		// should work on x32 as well as x64
+		$hex = dechex(ip2long32($ip));
+		$expectedlen = 8;
+	} elseif ($type == 6) {
+		$hex = str_replace(':', '', Net_IPv6::uncompress($ip, true));
+		$expectedlen = 32;
+	}
+
+	if ($type == '' || strlen($hex) != $expectedlen) {
+		// Not an IP, or IP -> hex has failed
+		// latter should never occur but checking it ensures comparisons won't be invalid due to bad response
+		$type = $hex = '';
+	}
+
+	return array('type' => $type, 'hex' => $hex)
+}
+
 /* Generate the (human readable) ipv4 or ipv6 subnet address (i.e., netmask, or subnet start IP)
    given an (human readable) ipv4 or ipv6 host address and subnet bit count */
 function gen_subnet($ipaddr, $bits) {
