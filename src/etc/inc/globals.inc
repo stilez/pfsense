@@ -112,7 +112,8 @@ $g = array(
 	"help_base_url" => "/help.php",
 	"pkg_prefix" => "pfSense-pkg-",
 	"default_timezone" => "Etc/UTC",
-	"language" => "en_US"
+	"language" => "en_US",
+	"session_timeout_gui_default" => "240" 
 );
 
 /* IP TOS flags */
