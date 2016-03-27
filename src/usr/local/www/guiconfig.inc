@@ -61,7 +61,19 @@
 if (!$nocsrf) {
 	function csrf_startup() {
 		csrf_conf('rewrite-js', '/csrf/csrf-magic.js');
-		$timeout_minutes = isset($config['system']['webgui']['session_timeout']) ? $config['system']['webgui']['session_timeout'] : 240;
+
+		$timeout =$config['system']['webgui']['session_timeout'];
+		if (!isset($timeout) || $timeout == "") {
+			$timeout_minutes = $g['session_timeout_gui_default'];
+		} elseif ($timeout === "0") {
+			$timeout_minutes = 100 * 365 * 24 * 60;
+		} elseif ($timeout > 0) {
+			$timeout_minutes = $timeout;
+		} else {
+			$t = unserialize($timeout)['timeout_minutes'];
+			$timeout_minutes = ($t > 0) ? $t : $g['session_timeout_gui_default'];
+		}
+
 		csrf_conf('expires', $timeout_minutes * 60);
 	}
 	require_once("csrf/csrf-magic.php");
