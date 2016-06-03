@@ -59,6 +59,7 @@ require_once('notices.inc');
 header('Content-Type: text/html; charset=utf-8');
 
 $pagetitle = gentitle($pgtitle);
+$helptext_tip = gettext("Help for this page");
 
 if (isset($config['system']['webgui']['pagenamefirst'])) {
 	$tabtitle = $pagetitle . " - " . htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']);
@@ -408,7 +409,7 @@ $gold_menu = msort(array_merge($gold_menu, return_ext_menu("Gold")), 0);
 
 if (!$g['disablehelpmenu']) {
 	$help_menu = array();
-	$help_menu[] = array(gettext("About this Page"), $helpurl);
+	$help_menu[] = array($helptext_tip, $helpurl);
 	if ($g['product_name'] == "pfSense") {
 		$help_menu[] = array(gettext("Bug Database"), "https://www.pfsense.org/j.php?jumpto=redmine");
 	}
@@ -594,7 +595,7 @@ if (('' != ($link = get_shortcut_log_link($shortcut_section, false))) && (isAllo
 ?>
 	<?php if (!$g['disablehelpicon']): ?>
 		<li>
-			<a href="<?=$helpurl?>" target="_blank" title="<?=gettext("Help for items on this page")?>">
+			<a href="<?=$helpurl?>" target="_blank" title="<?=$helptext_tip?>">
 				<i class="fa fa-question-circle"></i>
 			</a>
 		</li>
