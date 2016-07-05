@@ -224,6 +224,32 @@ if (file_exists("/etc/inc/globals_override.inc")) {
 	@include_once("globals_override.inc");
 }
 
+/* pfSense descriptions for common sysctls, where different from usual FreeBSD descrip */
+$g['sysctl_descrips'] = array(
+    'debug.pfftpproxy' => 'Disable the pf ftp proxy handler',
+    'hw.syscons.kbd_reboot' => 'Disable CTRL+ALT+Delete reboot from keyboard',
+    'kern.randompid' => 'see src/sys/kern/kern_fork.c: sysctl_kern_randompid()',
+    'net.inet.icmp.icmplim' => 'Set ICMP Limits',
+    'net.inet.ip.portrange.first' => 'Set the ephemeral port range to be lower',
+    'net.inet.ip.random_id' => 'Randomize the ID field in IP packets (default is 0: sequential IP IDs)',
+    'net.inet.tcp.blackhole' => 'Drop packets to closed TCP ports without returning a RST',
+    'net.inet.tcp.delayed_ack' => 'Do not delay ACK to try and piggyback it onto a data packet',
+    'net.inet.tcp.drop_synfin' => 'Drop SYN-FIN packets (breaks RFC1379, but nobody uses it anyway)',
+    'net.inet.tcp.inflight.enable' => 'Enable TCP Inflight mode',
+    'net.inet.tcp.log_debug' => 'Enable TCP extended debugging',
+    'net.inet.tcp.recvspace' => 'Maximum incoming/outgoing TCP datagram size (receive)',
+    'net.inet.tcp.sendspace' => 'Maximum incoming/outgoing TCP datagram size (send)',
+    'net.inet.tcp.syncookies' => 'Generate SYN cookies for outbound SYN-ACK packets',
+    'net.inet.tcp.tso' => 'TCP Offload Engine',
+    'net.inet.udp.blackhole' => 'Do not send ICMP port unreachable messages for closed UDP ports',
+    'net.inet6.ip6.redirect' => 'Enable sending IPv6 redirects',
+    'net.link.bridge.pfil_bridge' => 'Set to 1 to enable filtering on the bridge interface',
+    'net.link.bridge.pfil_member' => 'Set to 0 to disable filtering on the incoming and outgoing member interfaces',
+    'net.link.bridge.pfil_onlyip' => 'Handling of non-IP packets which are not passed to pfil (see if_bridge(4))',
+    'net.link.tap.user_open' => 'Allow unprivileged access to tap(4) device nodes',
+    'vfs.read_max' => 'Increase UFS read-ahead speeds to match current state of hard drives and NCQ. More information here: http://ivoras.sharanet.org/blog/tree/2010-11-19.ufs-read-ahead.html'
+);
+
 /* Read all XML files in following dir and load menu entries */
 $g["ext_menu_path"] = "/usr/local/share/{$g['product_name']}/menu";
 
