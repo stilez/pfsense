@@ -4980,4 +4980,23 @@ function upgrade_153_to_154() {
 	/* NOTE: This upgrade code was reverted. See redmine ticket #6118 and
 	   https://github.com/pfsense/pfsense/commit/538a3c04a6b6671151e913b06b2f340b6f8ee222 */
 }
+
+function upgrade_154_to_155() {
+	global $g, $config;
+
+	/* index tunables by their sysctl not an arbitrary number, and move standard descriptions out of config */
+	if (is_array($config['sysctl']['item']) {
+		$new = array();
+		foreach ($config['sysctl']['item'] as $idx => $data) {
+			list($tunable, $value, $descr) = array($data['tunable'], $data['value'], $data['descr']); 
+			if ($descr == $g['sysctl_descrips'][$tunable] || $descr . '.' == $g['sysctl_descrips'][$tunable]) {
+				// standard description, don't store in config
+				$descr = '';
+			}
+			$new[$tunable] = array('value' => $data['value'], 'custom_descr' => $data['descr']);
+		}
+		$config['sysctl']['item'] = $new;
+	} else {
+		$config['sysctl'] = array('item' => array());
+	}
 ?>
