@@ -104,7 +104,7 @@ function system_get_sysctls() {
 	global $config, $sysctls;
 
 	$disp_sysctl = array();
-	if (is_array($config['sysctl']) && is_array($config['sysctl']['item'])) {
+	if (is_array($config['sysctl']['item'])) {
 		foreach ($config['sysctl']['item'] as $tunable => $data) {
 			$disp_sysctl[$tunable] = $data + array('default_value' => get_default_sysctl_value($tunable), 'modified' => true);
 		}
@@ -122,18 +122,16 @@ function system_get_sysctls() {
 function activate_sysctls() {
 	global $config, $g, $sysctls;
 
-	if (is_array($config['sysctl']) && is_array($config['sysctl']['item'])) {
-		foreach ($config['sysctl']['item'] as $tunable) {
-			if ($tunable['value'] == "default") {
-				$value = get_default_sysctl_value($tunable['tunable']);
+	if (is_array($config['sysctl']['item'])) {
+		foreach ($config['sysctl']['item'] as $tunable => $data) {
+			if (!isset($data['value'] || $data['value'] == "default") {
+				$sysctls[$tunable] = get_default_sysctl_value($tunable);
 			} else {
-				$value = $tunable['value'];
+				$sysctls[$tunable] = $data['value'];
 			}
 
-			$sysctls[$tunable['tunable']] = $value;
 		}
 	}
-
 	set_sysctl($sysctls);
 }
 
