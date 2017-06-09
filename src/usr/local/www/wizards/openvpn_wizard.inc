@@ -19,6 +19,8 @@
  * limitations under the License.
  */
 
+// BUGCHECK:  SELF MEMO, CHECK ALL FILES FOR REFERENCES TO 'refid' AS WELL AS 'authserver'
+
 require_once("auth.inc");
 require_once("certs.inc");
 require_once("config.inc");
