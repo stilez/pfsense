@@ -123,29 +123,30 @@ unset($input_errors);
 if ($svr_exists && $a_server[$id]['type'] == 'local') {
 	$input_errors[] = gettext('The entry for "Local Database" authentication cannot be modified or removed.');
 } else {
-	if ($_POST['act'] == "del") {
-		if (!$a_server[$_POST['id']]) {
+	if ($act == "del") {
+
+		if (!$svr_exists) {
 			pfSenseHeader("system_authservers.php");
 			exit;
 		}
 
 		/* Remove server from main list. */
-		$serverdeleted = $a_server[$_POST['id']]['name'];
+		$server_to_delete = $a_server[$id]['name'];
 		foreach ($config['system']['authserver'] as $k => $as) {
-			if ($config['system']['authserver'][$k]['name'] == $serverdeleted) {
+			if ($config['system']['authserver'][$k]['name'] == $server_to_delete) {
 				unset($config['system']['authserver'][$k]);
 			}
 		}
 
 		/* Remove server from temp list used later on this page. */
-		unset($a_server[$_POST['id']]);
+		unset($a_server[$id]);
 
-		$savemsg = sprintf(gettext("Authentication Server %s deleted."), htmlspecialchars($serverdeleted));
+		$savemsg = sprintf(gettext("Authentication Server %s deleted."), htmlspecialchars($server_to_delete));
 		write_config($savemsg);
 	}
 
 	if ($act == "edit") {
-		if (isset($id) && $a_server[$id]) {
+		if ($svr_exists) {
 
 			$pconfig['type'] = $a_server[$id]['type'];
 			$pconfig['name'] = $a_server[$id]['name'];
@@ -300,10 +301,12 @@ if ($svr_exists && $a_server[$id]['type'] == 'local') {
 
 		if (!$input_errors) {
 			$server = array();
-	// BUGCHECK: Should we set a new refid on every call, or should it keep the same uniqid() when edited? If the latter, move this code to only be done if NEW, below
-			$server['refid'] = get_uniqid_array(array_column($config['system']['authserver'],"refid"));
 			if (isset($id) && $a_server[$id]) {
 				$server = $a_server[$id];
+			} else {
+				// BUGCHECK (1): Should we set a new refid on every call, or should it keep the same uniqid() when edited? If the latter, move this code to only be done if NEW, below
+				// BUGCHECK (2): In the original code this was defined and then immediately  overwritten if server $id already existed. Is this correct?
+				$server['refid'] = get_uniqid_array(array_column($config['system']['authserver'],"refid"));
 			}
 
 			$server['type'] = $pconfig['type'];
@@ -791,8 +794,7 @@ $section->addInput(new Form_Input(
 	'authentication system, increase this timeout to account for how long it will '.
 	'take the user to receive and enter a token.');
 
-if (isset($id) && $a_server[$id])
-{
+if ($svr_exists) {
 	$section->addInput(new Form_Input(
 		'id',
 		null,
