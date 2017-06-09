@@ -121,7 +121,7 @@ $svr_exists = isset($id) && $a_server[$id];
 unset($input_errors);
 
 if ($svr_exists && $a_server[$id]['type'] == 'local') {
-	$input_errors = gettext('The entry for "Local Database" authentication cannot be modified or removed.');
+	$input_errors[] = gettext('The entry for "Local Database" authentication cannot be modified or removed.');
 } else {
 	if ($_POST['act'] == "del") {
 		if (!$a_server[$_POST['id']]) {
