@@ -97,8 +97,6 @@ if ($_REQUEST['ajax']) {
 	exit;
 }
 
-$id = $_REQUEST['id'];
-
 if (!is_array($config['system']['authserver'])) {
 	$config['system']['authserver'] = array();
 }
@@ -117,8 +115,15 @@ $a_ca =& $config['ca'];
 
 $act = $_REQUEST['act'];
 
-	if ($_POST['act'] == "del") {
+$id = $_REQUEST['id'];
+$svr_exists = isset($id) && $a_server[$id];
 
+unset($input_errors);
+
+if ($svr_exists && $a_server[$id]['type'] == 'local') {
+	$input_errors = gettext('The entry for "Local Database" authentication cannot be modified or removed.');
+} else {
+	if ($_POST['act'] == "del") {
 		if (!$a_server[$_POST['id']]) {
 			pfSenseHeader("system_authservers.php");
 			exit;
@@ -211,7 +216,6 @@ $act = $_REQUEST['act'];
 	}
 
 	if ($_POST['save']) {
-		unset($input_errors);
 		$pconfig = $_POST;
 
 		/* input validation */
@@ -399,6 +403,7 @@ $act = $_REQUEST['act'];
 			pfSenseHeader("system_authservers.php");
 		}
 	}
+}
 
 // On error, restore the form contents so the user doesn't have to re-enter too much
 if ($_POST && $input_errors) {
