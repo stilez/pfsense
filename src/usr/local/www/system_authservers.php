@@ -296,7 +296,10 @@ if ($_POST['save']) {
 
 	if (!$input_errors) {
 		$server = array();
-		$server['refid'] = uniqid();
+		do {
+			$uniqid = uniqid();	// not guanteed unique (although very likely to be so). Avoid collision even if unlikely
+		while (in_array($uniqid, array_column($config['system']['authserver'],"refid")));
+		$server['refid'] = $uniqid;
 		if (isset($id) && $a_server[$id]) {
 			$server = $a_server[$id];
 		}
