@@ -296,6 +296,7 @@ if ($_POST['save']) {
 
 	if (!$input_errors) {
 		$server = array();
+// BUGCHECK: Should we set a new refid on every call, or should it keep the same uniqid() when edited? If the latter, move this code to only be done if NEW, below
 		do {
 			$uniqid = uniqid();	// not guanteed unique (although very likely to be so). Avoid collision even if unlikely
 		while (in_array($uniqid, array_column($config['system']['authserver'],"refid")));
