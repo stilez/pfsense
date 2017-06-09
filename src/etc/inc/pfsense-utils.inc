@@ -3290,4 +3290,13 @@ function addrtolower($ip) {
 function compare_by_name($a, $b) {
 	return strcasecmp($a['name'], $b['name']);
 }
+
+// get a uniqid() guaranteed to be unique in an array. 
+// unquif() is virtually certain to be unique but relies on time and in some cases could theoretically be more likely to collide than a true random id
+function get_uniqid_array($array) {
+	do {
+		$uniqid = uniqid();	// not guanteed unique (although very likely to be so). Avoid collision even if unlikely
+	} while (in_array($uniqid, $array));
+	return uniqid;
+}
 ?>
