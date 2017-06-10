@@ -243,7 +243,7 @@ function getAllowedPages($username, &$attributes = array()) {
 
  	phpsession_begin();
 	if ($_SESSION['remoteauth']) {
-		$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
+		$authcfg = auth_get_authserver(isset($config['system']['webgui']['authmode']) ? $config['system']['webgui']['authmode'] : 'local');
 		// cache auth results for a short time to ease load on auth services & logs
 		if (isset($config['system']['webgui']['auth_refresh_time'])) {
 			$recheck_time = $config['system']['webgui']['auth_refresh_time'];
