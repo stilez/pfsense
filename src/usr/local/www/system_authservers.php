@@ -129,20 +129,25 @@ if ($svr_exists && $a_server[$id]['type'] == 'local') {
 			pfSenseHeader("system_authservers.php");
 			exit;
 		}
+		if {isset($config['system']['webgui']['authmode']) && $config['system']['webgui']['authmode'] == $a_server[$id]['name']) {
+			$input_errors[] = gettext('cannot delete the current active WebGUI auth server. Lease set a different WebGUI auth server before deleting this server.');
+		} else {
 
-		/* Remove server from main list. */
-		$server_to_delete = $a_server[$id]['name'];
-		foreach ($config['system']['authserver'] as $k => $as) {
-			if ($config['system']['authserver'][$k]['name'] == $server_to_delete) {
-				unset($config['system']['authserver'][$k]);
+
+			/* Remove server from main list. */
+			$server_to_delete = $a_server[$id]['name'];
+			foreach ($config['system']['authserver'] as $k => $as) {
+				if ($config['system']['authserver'][$k]['name'] == $server_to_delete) {
+					unset($config['system']['authserver'][$k]);
+				}
 			}
+
+			/* Remove server from temp list used later on this page. */
+			unset($a_server[$id]);
+
+			$savemsg = sprintf(gettext("Authentication Server %s deleted."), htmlspecialchars($server_to_delete));
+			write_config($savemsg);
 		}
-
-		/* Remove server from temp list used later on this page. */
-		unset($a_server[$id]);
-
-		$savemsg = sprintf(gettext("Authentication Server %s deleted."), htmlspecialchars($server_to_delete));
-		write_config($savemsg);
 	}
 
 	if ($act == "edit") {
