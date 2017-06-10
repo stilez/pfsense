@@ -679,15 +679,9 @@ function is_ipsec_peer_ca($caref) {
 
 function is_ldap_peer_ca($caref) {
 	global $config;
-	if (!is_array($config['system']['authserver'])) {
-		return;
+	if (is_array($config['system']['authserver'])) {
+		return in_array($caref, array_column($config['system']['authserver'], 'ldap_caref'));
 	}
-	foreach ($config['system']['authserver'] as $authserver) {
-		if ($authserver['ldap_caref'] == $caref) {
-			return true;
-		}
-	}
-	return false;
 }
 
 function ca_in_use($caref) {
