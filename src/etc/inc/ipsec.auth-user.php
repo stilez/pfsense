@@ -110,13 +110,13 @@ if (($strictusercn === true) && ($common_name != $username)) {
 $attributes = array();
 foreach ($authmodes as $authmode) {
 	$authcfg = auth_get_authserver($authmode);
-	if (!$authcfg && $authmode != "Local Database") {
+	if (!$authcfg && $authmode != "local") {
 		continue;
 	}
 
 	$authenticated = authenticate_user($username, $password, $authcfg, $attributes);
 	if ($authenticated == true) {
-		if ($authmode == "Local Database") {
+		if ($authmode == "local") {
 			$user = getUserEntry($username);
 			if (!is_array($user) || !userHasPrivilege($user, "user-ipsec-xauth-dialin")) {
 				$authenticated = false;
