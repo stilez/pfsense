@@ -1645,7 +1645,8 @@ function save_widget_settings($username, $settings, $message = "") {
 	}
 }
 
-function auth_get_authserver($name) {
+//rename old func temporarily for tracking purposes
+function auth_get_authserver_OLD($name) {
 	global $config;
 
 	if (is_array($config['system']['authserver'])) {
@@ -1654,12 +1655,25 @@ function auth_get_authserver($name) {
 				return $authcfg;
 			}
 		}
-	} elseif ($name == "Local Database") {
+	} elseif ($name == "local") {
 		return array("name" => gettext("Local Database"), "type" => "local", "refid" = "local", "host" => $config['system']['hostname']);
 	}
 }
 
-function auth_get_authserver_list() {
+function auth_get_authserver_NEW($key) {
+	global $config;
+
+	if ($key == "local") {
+		return array("name" => gettext("Local Database"), "type" => "local", "refid" = "local", "host" => $config['system']['hostname']);
+	}
+	if (is_array($config['system']['authserver']) && array_key_exists($key, $config['system']['authserver'])) {
+		return $config['system']['authserver'][$key];
+	}
+	return;
+}
+
+//rename old func temporarily for tracking purposes
+function auth_get_authserver_list_OLD() {
 	global $config;
 
 	$list = array();
@@ -1673,6 +1687,17 @@ function auth_get_authserver_list() {
 
 	$list["Local Database"] = array("name" => gettext("Local Database"), "type" => "local", "refid" = "local", "host" => $config['system']['hostname']);
 	return $list;
+}
+
+function auth_get_authserver_list_NEW() {
+	global $config;
+
+	if (!is_array($config['system']['authserver'])) {
+		$config['system']['authserver'] = array();
+	}
+	
+	// return the normal list with an extra element equivalent to $config['system']['authserver']['local'], having type = refid = "local"
+	return $config['system']['authserver'] + array('local' => array("name" => gettext("Local Database"), "type" => "local", "refid" = "local", "host" => $config['system']['hostname']));
 }
 
 function getUserGroups($username, $authcfg, &$attributes = array()) {
