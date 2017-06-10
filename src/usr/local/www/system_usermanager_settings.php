@@ -98,7 +98,7 @@ $pconfig['session_timeout'] = $config['system']['webgui']['session_timeout'];
 if (isset($config['system']['webgui']['authmode'])) {
 	$pconfig['authmode'] = $config['system']['webgui']['authmode'];
 } else {
-	$pconfig['authmode'] = "Local Database";
+	$pconfig['authmode'] = "local";
 }
 
 $pconfig['backend'] = $config['system']['webgui']['backend'];
@@ -129,12 +129,14 @@ if ($_POST) {
 		}
 	}
 
-	if (($_POST['authmode'] == "Local Database") && $_POST['savetest']) {
+	if (!array_key_exists($_POST['authmode'], get_authservers_list())) {
+		$input_errors[] = gettext('The authentication server is invalid or undefined.');
+	} elseif (($_POST['authmode'] == "local") && $_POST['savetest']) {
 		$savemsg = gettext("Settings have been saved, but the test was not performed because it is not supported for local databases.");
 	}
 
 	if (!$input_errors) {
-		if ($_POST['authmode'] != "Local Database") {
+		if ($_POST['authmode'] != "local") {
 			$authsrv = auth_get_authserver($_POST['authmode']);
 			if ($_POST['savetest']) {
 				if ($authsrv['type'] == "ldap") {
@@ -151,10 +153,10 @@ if ($_POST) {
 			unset($config['system']['webgui']['session_timeout']);
 		}
 
-		if ($_POST['authmode']) {
-			$config['system']['webgui']['authmode'] = $_POST['authmode'];
-		} else {
+		if ($_POST['authmode'] == 'local') {
 			unset($config['system']['webgui']['authmode']);
+		} else {
+			$config['system']['webgui']['authmode'] = $_POST['authmode'];
 		}
 		
 		if (isset($_POST['auth_refresh_time']) && $_POST['auth_refresh_time'] != "") {
