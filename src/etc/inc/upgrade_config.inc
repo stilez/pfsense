@@ -5304,4 +5304,14 @@ function upgrade_164_to_165() {
 	}
 }
 
+/* if $config['system']['webgui']['authmode'] exists and "Local database", unset it to represent this as in default config;
+   don't have both unset and a (fixed) $config value to represent default auth. 
+   Note - if this is ever an issue, the value to reinstate is 'local' not 'Local Database' */
+function upgrade_164_to_165() {
+	global $config;
+	if (isset($config['system']['webgui']['authmode']) && $config['system']['webgui']['authmode']= "Local Database") {
+		unset($config['system']['webgui']['authmode']);
+	}
+}
+
 ?>
