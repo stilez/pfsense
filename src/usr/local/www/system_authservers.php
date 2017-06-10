@@ -33,7 +33,7 @@ require_once("auth.inc");
 require_once("pfsense-utils.inc");
 
 // Have we been called to populate the "Select a container" modal?
-if ($_REQUEST['ajax']) {
+if ($_REQUEST['ajax'] && $_REQUEST['ajaxact'] == "get_data") {
 
 	$ous = array();
 	$authcfg = array();
@@ -77,14 +77,12 @@ if ($_REQUEST['ajax']) {
 
 		// Create a "Save button"
 
-		$btnsv = new Form_Button(
+		$btnsv = (new Form_Button(
 			'svcontbtn',
 			'Save',
 			null,
 			'fa-save'
-		);
-
-		$btnsv->removeClass("btn-default)")->addClass("btn-primary");
+		))->removeClass("btn-default)")->addClass("btn-primary");
 
 		$modal->addInput(new Form_StaticText(
 			'',
@@ -121,19 +119,17 @@ $svr_exists = isset($id) && $a_server[$id];
 unset($input_errors);
 
 if ($svr_exists && $a_server[$id]['type'] == 'local') {
+	// any action is possible on a recognised server, if it's not the Local Database
 	$input_errors[] = gettext('The entry for "Local Database" authentication cannot be modified or removed.');
+} elseif ((!$svr_exists && $act != "new") || ($act == 'new' && isset($id)) {
+	// if the server is unrecognised then only "new" is possible, and then only if $id isn't set (which would be inconsistent)
+	$input_errors[] = gettext('The selected server ID was unrecognized or invalid.');
 } else {
+	// The existence (or non-existance) of an auth server matching $id is now tested so we can ignore it in this block of code
 	if ($act == "del") {
-
-		if (!$svr_exists) {
-			pfSenseHeader("system_authservers.php");
-			exit;
-		}
 		if {isset($config['system']['webgui']['authmode']) && $config['system']['webgui']['authmode'] == $a_server[$id]['name']) {
-			$input_errors[] = gettext('cannot delete the current active WebGUI auth server. Lease set a different WebGUI auth server before deleting this server.');
+			$input_errors[] = gettext('The selected server is used for WebGUI authentication. Please configure a different server or the Local Database for WebGUI authentication before deleting deleting this server.');
 		} else {
-
-
 			/* Remove server from main list. */
 			$server_to_delete = $a_server[$id]['name'];
 			foreach ($config['system']['authserver'] as $k => $as) {
@@ -151,63 +147,59 @@ if ($svr_exists && $a_server[$id]['type'] == 'local') {
 	}
 
 	if ($act == "edit") {
-		if ($svr_exists) {
+		$pconfig['type'] = $a_server[$id]['type'];
+		$pconfig['name'] = $a_server[$id]['name'];
 
-			$pconfig['type'] = $a_server[$id]['type'];
-			$pconfig['name'] = $a_server[$id]['name'];
+		if ($pconfig['type'] == "ldap") {
+			$pconfig['ldap_caref'] = $a_server[$id]['ldap_caref'];
+			$pconfig['ldap_host'] = $a_server[$id]['host'];
+			$pconfig['ldap_port'] = $a_server[$id]['ldap_port'];
+			$pconfig['ldap_timeout'] = $a_server[$id]['ldap_timeout'];
+			$pconfig['ldap_urltype'] = $a_server[$id]['ldap_urltype'];
+			$pconfig['ldap_protver'] = $a_server[$id]['ldap_protver'];
+			$pconfig['ldap_scope'] = $a_server[$id]['ldap_scope'];
+			$pconfig['ldap_basedn'] = $a_server[$id]['ldap_basedn'];
+			$pconfig['ldap_authcn'] = $a_server[$id]['ldap_authcn'];
+			$pconfig['ldap_extended_enabled'] = $a_server[$id]['ldap_extended_enabled'];
+			$pconfig['ldap_extended_query'] = $a_server[$id]['ldap_extended_query'];
+			$pconfig['ldap_binddn'] = $a_server[$id]['ldap_binddn'];
+			$pconfig['ldap_bindpw'] = $a_server[$id]['ldap_bindpw'];
+			$pconfig['ldap_attr_user'] = $a_server[$id]['ldap_attr_user'];
+			$pconfig['ldap_attr_group'] = $a_server[$id]['ldap_attr_group'];
+			$pconfig['ldap_attr_member'] = $a_server[$id]['ldap_attr_member'];
+			$pconfig['ldap_attr_groupobj'] = $a_server[$id]['ldap_attr_groupobj'];
+			$pconfig['ldap_utf8'] = isset($a_server[$id]['ldap_utf8']);
+			$pconfig['ldap_nostrip_at'] = isset($a_server[$id]['ldap_nostrip_at']);
+			$pconfig['ldap_rfc2307'] = isset($a_server[$id]['ldap_rfc2307']);
 
-			if ($pconfig['type'] == "ldap") {
-				$pconfig['ldap_caref'] = $a_server[$id]['ldap_caref'];
-				$pconfig['ldap_host'] = $a_server[$id]['host'];
-				$pconfig['ldap_port'] = $a_server[$id]['ldap_port'];
-				$pconfig['ldap_timeout'] = $a_server[$id]['ldap_timeout'];
-				$pconfig['ldap_urltype'] = $a_server[$id]['ldap_urltype'];
-				$pconfig['ldap_protver'] = $a_server[$id]['ldap_protver'];
-				$pconfig['ldap_scope'] = $a_server[$id]['ldap_scope'];
-				$pconfig['ldap_basedn'] = $a_server[$id]['ldap_basedn'];
-				$pconfig['ldap_authcn'] = $a_server[$id]['ldap_authcn'];
-				$pconfig['ldap_extended_enabled'] = $a_server[$id]['ldap_extended_enabled'];
-				$pconfig['ldap_extended_query'] = $a_server[$id]['ldap_extended_query'];
-				$pconfig['ldap_binddn'] = $a_server[$id]['ldap_binddn'];
-				$pconfig['ldap_bindpw'] = $a_server[$id]['ldap_bindpw'];
-				$pconfig['ldap_attr_user'] = $a_server[$id]['ldap_attr_user'];
-				$pconfig['ldap_attr_group'] = $a_server[$id]['ldap_attr_group'];
-				$pconfig['ldap_attr_member'] = $a_server[$id]['ldap_attr_member'];
-				$pconfig['ldap_attr_groupobj'] = $a_server[$id]['ldap_attr_groupobj'];
-				$pconfig['ldap_utf8'] = isset($a_server[$id]['ldap_utf8']);
-				$pconfig['ldap_nostrip_at'] = isset($a_server[$id]['ldap_nostrip_at']);
-				$pconfig['ldap_rfc2307'] = isset($a_server[$id]['ldap_rfc2307']);
+			if (!$pconfig['ldap_binddn'] || !$pconfig['ldap_bindpw']) {
+				$pconfig['ldap_anon'] = true;
+			}
+		}
 
-				if (!$pconfig['ldap_binddn'] || !$pconfig['ldap_bindpw']) {
-					$pconfig['ldap_anon'] = true;
-				}
+		if ($pconfig['type'] == "radius") {
+			$pconfig['radius_protocol'] = $a_server[$id]['radius_protocol'];
+			$pconfig['radius_host'] = $a_server[$id]['host'];
+			$pconfig['radius_auth_port'] = $a_server[$id]['radius_auth_port'];
+			$pconfig['radius_acct_port'] = $a_server[$id]['radius_acct_port'];
+			$pconfig['radius_secret'] = $a_server[$id]['radius_secret'];
+			$pconfig['radius_timeout'] = $a_server[$id]['radius_timeout'];
+
+			if ($pconfig['radius_auth_port'] &&
+				$pconfig['radius_acct_port']) {
+				$pconfig['radius_srvcs'] = "both";
 			}
 
-			if ($pconfig['type'] == "radius") {
-				$pconfig['radius_protocol'] = $a_server[$id]['radius_protocol'];
-				$pconfig['radius_host'] = $a_server[$id]['host'];
-				$pconfig['radius_auth_port'] = $a_server[$id]['radius_auth_port'];
-				$pconfig['radius_acct_port'] = $a_server[$id]['radius_acct_port'];
-				$pconfig['radius_secret'] = $a_server[$id]['radius_secret'];
-				$pconfig['radius_timeout'] = $a_server[$id]['radius_timeout'];
+			if ($pconfig['radius_auth_port'] &&
+				!$pconfig['radius_acct_port']) {
+				$pconfig['radius_srvcs'] = "auth";
+				$pconfig['radius_acct_port'] = 1813;
+			}
 
-				if ($pconfig['radius_auth_port'] &&
-					$pconfig['radius_acct_port']) {
-					$pconfig['radius_srvcs'] = "both";
-				}
-
-				if ($pconfig['radius_auth_port'] &&
-					!$pconfig['radius_acct_port']) {
-					$pconfig['radius_srvcs'] = "auth";
-					$pconfig['radius_acct_port'] = 1813;
-				}
-
-				if (!$pconfig['radius_auth_port'] &&
-					$pconfig['radius_acct_port']) {
-					$pconfig['radius_srvcs'] = "acct";
-					$pconfig['radius_auth_port'] = 1812;
-				}
-
+			if (!$pconfig['radius_auth_port'] &&
+				$pconfig['radius_acct_port']) {
+				$pconfig['radius_srvcs'] = "acct";
+				$pconfig['radius_auth_port'] = 1812;
 			}
 		}
 	}
@@ -286,7 +278,7 @@ if ($svr_exists && $a_server[$id]['type'] == 'local') {
 			$input_errors[] = gettext("The host name contains invalid characters.");
 		}
 
-		if (auth_get_authserver($pconfig['name']) && !isset($id)) {
+		if (auth_get_authserver($pconfig['name'])) {
 			$input_errors[] = gettext("An authentication server with the same name already exists.");
 		}
 
@@ -861,6 +853,7 @@ events.push(function() {
 				type: "post",
 				data: {
 					ajax: 	"ajax",
+					ajaxact:    'get_data',
 					port: 	$('#ldap_port').val(),
 					host: 	$('#ldap_host').val(),
 					scope: 	$('#ldap_scope').val(),
