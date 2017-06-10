@@ -456,7 +456,7 @@ function step12_submitphpaction() {
 
 	if ($pconfig['step1']['type'] == "local") {
 		$auth = array();
-		$auth['name'] = "Local Database";
+		$auth['name'] = "local";
 		$auth['type'] = "local";
 	} else if (isset($pconfig['step2']['uselist'])) {
 		$auth = array();
@@ -565,7 +565,7 @@ function step12_submitphpaction() {
 			$server['mode'] = "server_user";
 			break;
 		default:
-			$server['authmode'] = "Local Database";
+			$server['authmode'] = "local";
 			$server['mode'] = "server_tls_user";
 			break;
 	}
