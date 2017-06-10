@@ -95,11 +95,7 @@ if ($_REQUEST['ajax']) {
 
 $pconfig['session_timeout'] = $config['system']['webgui']['session_timeout'];
 
-if (isset($config['system']['webgui']['authmode'])) {
-	$pconfig['authmode'] = $config['system']['webgui']['authmode'];
-} else {
-	$pconfig['authmode'] = "local";
-}
+$pconfig['authmode'] = (isset($config['system']['webgui']['authmode']) ? $config['system']['webgui']['authmode']:  "local");
 
 $pconfig['backend'] = $config['system']['webgui']['backend'];
 
