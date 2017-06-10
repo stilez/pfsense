@@ -1663,9 +1663,12 @@ function auth_get_authserver_OLD($name) {
 function auth_get_authserver_NEW($key) {
 	global $config;
 
-	if ($key == "local") {
+	// treat as "local" both an unset value (if we're passed $config['system']['webgui']['authmode'] which is unset by default),
+	// and the literal string "local" which is used in GUI logic, so we get the expected response in both cases
+	if ($key == "local" || !isset($key)) {
 		return array("name" => gettext("Local Database"), "type" => "local", "refid" = "local", "host" => $config['system']['hostname']);
 	}
+	// else look it up
 	if (is_array($config['system']['authserver']) && array_key_exists($key, $config['system']['authserver'])) {
 		return $config['system']['authserver'][$key];
 	}
