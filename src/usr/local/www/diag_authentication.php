@@ -59,11 +59,7 @@ if ($_POST) {
 		}
 	}
 } else {
-	if (isset($config['system']['webgui']['authmode'])) {
-		$pconfig['authmode'] = $config['system']['webgui']['authmode'];
-	} else {
-		$pconfig['authmode'] = "Local Database";
-	}
+	$pconfig['authmode'] = (isset($config['system']['webgui']['authmode']) ? $config['system']['webgui']['authmode'] : 'local');
 }
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Authentication"));
