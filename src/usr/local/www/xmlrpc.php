@@ -49,7 +49,7 @@ class pfsense_xmlrpc_server {
 		$login_ok = false;
 		if (!empty($username) && !empty($password)) {
 			$attributes = array();
-			$authcfg = auth_get_authserver(isset($config['system']['webgui']['authmode']) ? $config['system']['webgui']['authmode'] : 'local');
+			$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
 
 			if (authenticate_user($username, $password, $authcfg, $attributes) ||
 			    authenticate_user($username, $password)) {
