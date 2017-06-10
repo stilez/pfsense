@@ -159,17 +159,15 @@ if (!is_array($authmodes)) {
 $attributes = array();
 foreach ($authmodes as $authmode) {
 	$authcfg = auth_get_authserver($authmode);
-	if (!$authcfg && $authmode != "Local Database") {
-		continue;
-	}
-
-	$authenticated = authenticate_user($username, $password, $authcfg, $attributes);
-	if ($authenticated == true) {
-		break;
+	if ($authmode == "local") {
+		$authenticated = authenticate_user($username, $password, $authcfg, $attributes);
+		if ($authenticated) {
+			break;
+		}
 	}
 }
 
-if ($authenticated == false) {
+if (!$authenticated) {
 	syslog(LOG_WARNING, "user '{$username}' could not authenticate.\n");
 	if (isset($_GET['username'])) {
 		echo "FAILED";
