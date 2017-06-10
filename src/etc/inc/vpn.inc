@@ -599,7 +599,7 @@ EOD;
 					$strongswan .= ",";
 				}
 				if ($authcfg == "system") {
-					$authcfg = "Local Database";
+					$authcfg = "local";
 				}
 				$strongswan .= $authcfg;
 				$firstsed = 1;
